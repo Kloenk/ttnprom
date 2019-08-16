@@ -1,5 +1,5 @@
 use clap::{App, Arg, SubCommand};
-use ttnprom::Config;
+use ttnprom::{Config, PluginConf};
 
 fn main() {
     let mut app = App::new("ttnprom")
@@ -22,7 +22,7 @@ fn main() {
                 .short("p")
                 .long("plugin")
                 .value_name("FILE")
-                .help("load plugin file")
+                .help("load plugin file (arguments seperated with ':')")
                 .takes_value(true)
                 .multiple(true)
         );
@@ -71,20 +71,7 @@ fn main() {
     if let Some(values) = matches.values_of("plugin") {
         let values: Vec<_> = values.collect();
         for v in values.iter() {
-            let mut v: String = v.to_string();
-            if !v.starts_with("lib") {
-                v = format!("lib{}", v);
-            }
-
-            if !v.ends_with(".so") && cfg!(not(windows)) {
-                v = format!("{}.so", v);
-            }
-
-            if !v.ends_with(".dll") && cfg!(windows) {
-                v = format!("{}.dll", v);
-            }
-
-            config.plugins.push(v);
+            config.plugins.push(PluginConf::parse(v));
         }
     }
 
