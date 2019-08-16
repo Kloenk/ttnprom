@@ -2,6 +2,12 @@
 
 
 
+/// plugin mod for the Plugin trait
+pub mod plugin;
+
+/// data mod holding the datatypes
+pub mod data;
+
 pub struct Config {
     pub plugins: Vec<String>,
 }
